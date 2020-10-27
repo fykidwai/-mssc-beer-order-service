@@ -1,4 +1,5 @@
-[![CircleCI](https://circleci.com/gh/springframeworkguru/mssc-beer-order-service.svg?style=svg)](https://circleci.com/gh/springframeworkguru/mssc-beer-order-service)
+[![CircleCI](https://circleci.com/gh/fykidwai/mssc-beer-order-service.svg?style=svg)](https://circleci.com/gh/fykidwai/mssc-beer-order-service)<br>
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fykidwai_mssc-beer-order-service&metric=alert_status)](https://sonarcloud.io/dashboard?id=fykidwai_mssc-beer-order-service) <a href="https://sonarcloud.io/dashboard?id=fykidwai_mssc-beer-order-service"> <img src="https://sonarcloud.io/images/project_badges/sonarcloud-black.svg" height=15% width=15% /></a>
 
 # MSSC Beer Order Service
 
