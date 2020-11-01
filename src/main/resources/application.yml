@@ -3,3 +3,6 @@ logging:
     guru: debug
 server:
   port: 9091
+sfg:
+  brewery:
+    beer-service-host: http://localhost:9090
