@@ -2,4 +2,6 @@ spring:
   datasource:
     username: beer_order_service
     password: password
-    url: jdbc:mysql://192.168.99.101:3306/beerorderservice?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC  jpa:    database: mysql    hibernate:      ddl-auto: update    database-platform: org.hibernate.dialect.MySQL8Dialect
+    url: jdbc:mysql://192.168.99.101:3306/beerorderservice?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC  jpa:    database: mysql    hibernate:      ddl-auto: update    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
