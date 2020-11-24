@@ -6,3 +6,8 @@ server:
 sfg:
   brewery:
     beer-service-host: http://localhost:9090
+spring:
+  artemis:
+    host: 192.168.99.101
+    user: artemis
+    password: simetraehcapa
