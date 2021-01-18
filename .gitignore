@@ -197,3 +197,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/.vs
