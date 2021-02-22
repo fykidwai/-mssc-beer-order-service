@@ -9,6 +9,7 @@ import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.support.StateMachineInterceptorAdapter;
 import org.springframework.statemachine.transition.Transition;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import guru.sfg.beer.order.service.domain.BeerOrder;
 import guru.sfg.beer.order.service.domain.BeerOrderEventEnum;
@@ -27,9 +28,12 @@ public class BeerOrderStateChangeInterceptor
     private final BeerOrderRepository beerOrderRepository;
 
     @Override
+    @Transactional
     public void preStateChange(final State<BeerOrderStatusEnum, BeerOrderEventEnum> state,
         final Message<BeerOrderEventEnum> message, final Transition<BeerOrderStatusEnum, BeerOrderEventEnum> transition,
         final StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> stateMachine) {
+        log.debug("Pre-State Change");
+
         Optional.ofNullable(message)
             .flatMap(
                 msg -> Optional.ofNullable((String)msg.getHeaders().getOrDefault(BeerOrderManagerImpl.ORDER_ID_HEADER, " ")))

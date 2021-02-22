@@ -14,8 +14,8 @@ import guru.sfg.brewery.model.BeerDto;
 @ConfigurationProperties(prefix = "sfg.brewery")
 public class BeerServiceRestTemplateImpl implements BeerService {
 
-    private static final String BEER_V1_PATH = "/api/v1/beer/{beerId}";
-    private static final String BEER_UPC_PATH = "/api/v1/beerUpc/{upc}";
+    public static final String BEER_V1_PATH = "/api/v1/beer/{beerId}";
+    public static final String BEER_UPC_PATH = "/api/v1/beerUpc/{upc}";
     private final RestTemplate restTemplate;
 
     private String beerServiceHost;

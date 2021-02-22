@@ -11,3 +11,7 @@ spring:
     host: 192.168.99.101
     user: artemis
     password: simetraehcapa
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      write-date-timestamps-as-nanoseconds: true

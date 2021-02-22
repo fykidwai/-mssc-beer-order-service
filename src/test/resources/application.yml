@@ -1,0 +1,6 @@
+server:
+  port: 9090
+sfg:
+  brewery:
+    beer-service-host: http://localhost:9093
+

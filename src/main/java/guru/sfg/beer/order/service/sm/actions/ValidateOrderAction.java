@@ -1,5 +1,6 @@
 package guru.sfg.beer.order.service.sm.actions;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.jms.core.JmsTemplate;
@@ -30,10 +31,11 @@ public class ValidateOrderAction implements Action<BeerOrderStatusEnum, BeerOrde
     @Override
     public void execute(final StateContext<BeerOrderStatusEnum, BeerOrderEventEnum> context) {
         final String beerOrderId = (String)context.getMessage().getHeaders().get(BeerOrderManagerImpl.ORDER_ID_HEADER);
-        final BeerOrder beerOrder = beerOrderRepository.findOneById(UUID.fromString(beerOrderId));
-        jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_QUEUE,
-            ValidateOrderRequest.builder().beerOrderDto(beerOrderMapper.beerOrderToDto(beerOrder)).build());
-        log.debug("Sent validation request to queue for " + beerOrderId);
+        final Optional<BeerOrder> optBeerOrder = beerOrderRepository.findById(UUID.fromString(beerOrderId));
+        optBeerOrder.ifPresentOrElse(beerOrder -> {
+            jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_QUEUE,
+                ValidateOrderRequest.builder().beerOrderDto(beerOrderMapper.beerOrderToDto(beerOrder)).build());
+            log.debug("Sent validation request to queue for " + beerOrderId);
+        }, () -> log.error("Beer Order Not Found!"));
     }
-
 }
