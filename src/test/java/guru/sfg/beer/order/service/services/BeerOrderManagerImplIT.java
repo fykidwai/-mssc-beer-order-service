@@ -37,7 +37,7 @@ import guru.sfg.brewery.model.BeerDto;
 
 @ExtendWith(WireMockExtension.class)
 @SpringBootTest
-public class BeerOrderManagerImplIT {
+class BeerOrderManagerImplIT {
 
     @Autowired
     private BeerOrderManager beerOrderManager;
@@ -52,7 +52,7 @@ public class BeerOrderManagerImplIT {
      */
 //    @Autowired
     @Managed
-    WireMockServer wireMockServer = with(wireMockConfig().port(9093));
+    private final WireMockServer wireMockServer = with(wireMockConfig().port(9093));
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -87,14 +87,21 @@ public class BeerOrderManagerImplIT {
 
         await().untilAsserted(() -> {
             final BeerOrder foundOrder = beerOrderRepository.findById(beerOrder.getId()).get();
-
-            // TODO - ALLOCATED STATUS
             assertEquals(BeerOrderStatusEnum.ALLOCATED, foundOrder.getOrderStatus());
         });
+
+        await().untilAsserted(() -> {
+            final BeerOrder foundOrder = beerOrderRepository.findById(beerOrder.getId()).get();
+            final BeerOrderLine line = foundOrder.getBeerOrderLines().iterator().next();
+            assertEquals(line.getOrderQuantity(), line.getQuantityAllocated());
+        });
+
         final BeerOrder savedBeerOrder2 = beerOrderRepository.findById(savedBeerOrder.getId()).get();
-
+        assertNotNull(savedBeerOrder2);
         assertEquals(BeerOrderStatusEnum.ALLOCATED, savedBeerOrder2.getOrderStatus());
-
+        savedBeerOrder2.getBeerOrderLines().forEach(line -> {
+            assertEquals(line.getOrderQuantity(), line.getQuantityAllocated());
+        });
     }
 
     private String parseURL(final String uriTemplate, final Object... uriVariables) {
