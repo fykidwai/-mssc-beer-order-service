@@ -75,14 +75,15 @@ class BeerOrderManagerImplIT {
     }
 
     @Test
-    void testNewToAllocate() throws JsonProcessingException, InterruptedException {
-//        Thread.sleep(5000);
+    void testNewToAllocate() throws JsonProcessingException {
         final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
         wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
-//        Thread.sleep(5000);
+
         final BeerOrder beerOrder = createBeerOrder();
+
         final BeerOrder savedBeerOrder = beerOrderManager.newBeerOrder(beerOrder);
+
         assertNotNull(savedBeerOrder);
 
         await().untilAsserted(() -> {
@@ -102,6 +103,35 @@ class BeerOrderManagerImplIT {
         savedBeerOrder2.getBeerOrderLines().forEach(line -> {
             assertEquals(line.getOrderQuantity(), line.getQuantityAllocated());
         });
+    }
+
+    @Test
+    void testNewToPickedUp() throws JsonProcessingException {
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+            .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
+
+        final BeerOrder beerOrder = createBeerOrder();
+
+        final BeerOrder savedBeerOrder = beerOrderManager.newBeerOrder(beerOrder);
+
+        assertNotNull(savedBeerOrder);
+
+        await().untilAsserted(() -> {
+            final BeerOrder foundOrder = beerOrderRepository.findById(beerOrder.getId()).get();
+            assertEquals(BeerOrderStatusEnum.ALLOCATED, foundOrder.getOrderStatus());
+        });
+
+        beerOrderManager.beerOrderPickedUp(savedBeerOrder.getId());
+
+        await().untilAsserted(() -> {
+            final BeerOrder foundOrder = beerOrderRepository.findById(beerOrder.getId()).get();
+            assertEquals(BeerOrderStatusEnum.PICKED_UP, foundOrder.getOrderStatus());
+        });
+
+        final BeerOrder pickedUpOrder = beerOrderRepository.findById(savedBeerOrder.getId()).get();
+
+        assertEquals(BeerOrderStatusEnum.PICKED_UP, pickedUpOrder.getOrderStatus());
     }
 
     private String parseURL(final String uriTemplate, final Object... uriVariables) {
