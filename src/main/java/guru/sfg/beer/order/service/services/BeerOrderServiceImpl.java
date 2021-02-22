@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,18 +33,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class BeerOrderServiceImpl implements BeerOrderService {
 
-    private final BeerOrderRepository beerOrderRepository;
-    private final CustomerRepository customerRepository;
-    private final BeerOrderMapper beerOrderMapper;
-    private final ApplicationEventPublisher publisher;
-
-    public BeerOrderServiceImpl(final BeerOrderRepository beerOrderRepository, final CustomerRepository customerRepository,
-        final BeerOrderMapper beerOrderMapper, final ApplicationEventPublisher publisher) {
-        this.beerOrderRepository = beerOrderRepository;
-        this.customerRepository = customerRepository;
-        this.beerOrderMapper = beerOrderMapper;
-        this.publisher = publisher;
-    }
+    private /* final */ BeerOrderRepository beerOrderRepository;
+    private /* final */ CustomerRepository customerRepository;
+    private /* final */ BeerOrderMapper beerOrderMapper;
+    private /* final */ BeerOrderManager beerOrderManager;
 
     @Override
     public BeerOrderPagedList listOrders(final UUID customerId, final Pageable pageable) {
@@ -76,12 +67,9 @@ public class BeerOrderServiceImpl implements BeerOrderService {
 
             beerOrder.getBeerOrderLines().forEach(line -> line.setBeerOrder(beerOrder));
 
-            final BeerOrder savedBeerOrder = beerOrderRepository.saveAndFlush(beerOrder);
+            final BeerOrder savedBeerOrder = beerOrderManager.newBeerOrder(beerOrder);
 
             log.debug("Saved Beer Order: " + beerOrder.getId());
-
-            // todo impl
-            // publisher.publishEvent(new NewBeerOrderEvent(savedBeerOrder));
 
             return beerOrderMapper.beerOrderToDto(savedBeerOrder);
         }
@@ -96,10 +84,7 @@ public class BeerOrderServiceImpl implements BeerOrderService {
 
     @Override
     public void pickupOrder(final UUID customerId, final UUID orderId) {
-        final BeerOrder beerOrder = getOrder(customerId, orderId);
-        beerOrder.setOrderStatus(BeerOrderStatusEnum.PICKED_UP);
-
-        beerOrderRepository.save(beerOrder);
+        beerOrderManager.beerOrderPickedUp(orderId);
     }
 
     private BeerOrder getOrder(final UUID customerId, final UUID orderId) {
