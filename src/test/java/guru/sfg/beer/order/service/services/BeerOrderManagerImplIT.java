@@ -89,7 +89,7 @@ public class BeerOrderManagerImplIT {
             final BeerOrder foundOrder = beerOrderRepository.findById(beerOrder.getId()).get();
 
             // TODO - ALLOCATED STATUS
-            assertEquals(BeerOrderStatusEnum.ALLOCATION_PENDING, foundOrder.getOrderStatus());
+            assertEquals(BeerOrderStatusEnum.ALLOCATED, foundOrder.getOrderStatus());
         });
         final BeerOrder savedBeerOrder2 = beerOrderRepository.findById(savedBeerOrder.getId()).get();
 
