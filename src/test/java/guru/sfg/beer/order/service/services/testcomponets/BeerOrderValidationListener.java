@@ -23,10 +23,10 @@ public class BeerOrderValidationListener {
 
         final ValidateOrderRequest request = msg.getPayload();
 
-        System.out.println("########### I RAN ########");
-
+        // condition to fail validation
+        final boolean isValid = !"fail-validation".equals(request.getBeerOrderDto().getCustomerRef());
         jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESPONSE_QUEUE,
-            ValidateOrderResult.builder().isValid(true).orderId(request.getBeerOrderDto().getId()).build());
+            ValidateOrderResult.builder().isValid(isValid).orderId(request.getBeerOrderDto().getId()).build());
 
     }
 }
