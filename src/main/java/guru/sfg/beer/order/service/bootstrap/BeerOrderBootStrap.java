@@ -31,9 +31,9 @@ public class BeerOrderBootStrap implements CommandLineRunner {
     }
 
     private void loadCustomerData() {
-        if (customerRepository.findAllByCustomerNameLike(BeerOrderBootStrap.TASTING_ROOM).size() == 0) {
-            final Customer savedCustomer = customerRepository
-                .saveAndFlush(Customer.builder().customerName(TASTING_ROOM).apiKey(UUID.randomUUID()).build());
+        if (customerRepository.findAllByCustomerNameLike(BeerOrderBootStrap.TASTING_ROOM).isEmpty()) {
+            final Customer savedCustomer = customerRepository.saveAndFlush(
+                Customer.builder().customerName(TASTING_ROOM).id(UUID.randomUUID()).apiKey(UUID.randomUUID()).build());
             log.debug("Tasting Room Customer id {}", savedCustomer.getId().toString());
         }
     }

@@ -27,16 +27,18 @@ import guru.sfg.beer.order.service.repositories.CustomerRepository;
 import guru.sfg.beer.order.service.web.mappers.BeerOrderMapper;
 import guru.sfg.brewery.model.BeerOrderDto;
 import guru.sfg.brewery.model.BeerOrderPagedList;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class BeerOrderServiceImpl implements BeerOrderService {
 
-    private /* final */ BeerOrderRepository beerOrderRepository;
-    private /* final */ CustomerRepository customerRepository;
-    private /* final */ BeerOrderMapper beerOrderMapper;
-    private /* final */ BeerOrderManager beerOrderManager;
+    private final BeerOrderRepository beerOrderRepository;
+    private final CustomerRepository customerRepository;
+    private final BeerOrderMapper beerOrderMapper;
+    private final BeerOrderManager beerOrderManager;
 
     @Override
     public BeerOrderPagedList listOrders(final UUID customerId, final Pageable pageable) {
