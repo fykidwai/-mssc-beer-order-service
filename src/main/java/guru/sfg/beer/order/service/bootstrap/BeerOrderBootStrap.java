@@ -31,10 +31,10 @@ public class BeerOrderBootStrap implements CommandLineRunner {
     }
 
     private void loadCustomerData() {
-        if (customerRepository.count() == 0) {
-            final var customer =
-                customerRepository.save(Customer.builder().customerName(TASTING_ROOM).apiKey(UUID.randomUUID()).build());
-            log.debug("Tasting Room Customer id {}", customer.getId().toString());
+        if (customerRepository.findAllByCustomerNameLike(BeerOrderBootStrap.TASTING_ROOM).size() == 0) {
+            final Customer savedCustomer = customerRepository
+                .saveAndFlush(Customer.builder().customerName(TASTING_ROOM).apiKey(UUID.randomUUID()).build());
+            log.debug("Tasting Room Customer id {}", savedCustomer.getId().toString());
         }
     }
 }
