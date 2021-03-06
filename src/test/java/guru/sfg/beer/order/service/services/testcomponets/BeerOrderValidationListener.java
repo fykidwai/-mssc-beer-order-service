@@ -25,8 +25,11 @@ public class BeerOrderValidationListener {
 
         // condition to fail validation
         final boolean isValid = !"fail-validation".equals(request.getBeerOrderDto().getCustomerRef());
-        jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESPONSE_QUEUE,
-            ValidateOrderResult.builder().isValid(isValid).orderId(request.getBeerOrderDto().getId()).build());
+        final boolean sendResponse = !"dont-validate".equals(request.getBeerOrderDto().getCustomerRef());
+        if (sendResponse) {
+            jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESPONSE_QUEUE,
+                ValidateOrderResult.builder().isValid(isValid).orderId(request.getBeerOrderDto().getId()).build());
+        }
 
     }
 }
