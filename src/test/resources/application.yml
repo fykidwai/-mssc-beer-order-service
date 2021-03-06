@@ -3,4 +3,6 @@ server:
 sfg:
   brewery:
     beer-service-host: http://localhost:9093
-
+logging:
+  level:
+    guru: debug
