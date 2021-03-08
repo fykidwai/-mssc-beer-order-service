@@ -31,7 +31,8 @@ public class BeerOrderStateChangeInterceptor
     @Transactional
     public void preStateChange(final State<BeerOrderStatusEnum, BeerOrderEventEnum> state,
         final Message<BeerOrderEventEnum> message, final Transition<BeerOrderStatusEnum, BeerOrderEventEnum> transition,
-        final StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> stateMachine) {
+        final StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> stateMachine,
+        final StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> rootStateMachine) {
         log.debug("Pre-State Change");
 
         Optional.ofNullable(message)

@@ -28,6 +28,7 @@ import com.github.jenspiegsa.wiremockextension.Managed;
 import com.github.jenspiegsa.wiremockextension.WireMockExtension;
 import com.github.tomakehurst.wiremock.WireMockServer;
 
+import guru.sfg.beer.order.service.bootstrap.BeerOrderBootStrap;
 import guru.sfg.beer.order.service.config.JmsConfig;
 import guru.sfg.beer.order.service.domain.BeerOrder;
 import guru.sfg.beer.order.service.domain.BeerOrderLine;
@@ -75,10 +76,18 @@ class BeerOrderManagerImplIT {
          */
     }
 
+    private void stub(final String upc) throws JsonProcessingException {
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, upc))
+            .willReturn(okJson(objectMapper.writeValueAsString(BeerDto.builder().id(beerId).upc(upc).build()))));
+    }
+
     @BeforeEach
-    void setup() {
+    void setup() throws JsonProcessingException {
         beerId = getID();
         testCustomer = customerRepository.save(Customer.builder().id(getID()).customerName("TestCust").build());
+        stub(BeerOrderBootStrap.BEER_1_UPC);
+        stub(BeerOrderBootStrap.BEER_2_UPC);
+        stub(BeerOrderBootStrap.BEER_3_UPC);
     }
 
     @Test
