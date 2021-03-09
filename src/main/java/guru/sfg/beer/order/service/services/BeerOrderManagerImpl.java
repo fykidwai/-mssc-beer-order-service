@@ -42,6 +42,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         beerOrder.setOrderStatus(BeerOrderStatusEnum.NEW);
         final BeerOrder savedBeerOrder = beerOrderRepository.saveAndFlush(beerOrder);
         sendBeerOrderEvent(savedBeerOrder, BeerOrderEventEnum.VALIDATE_ORDER);
+        awaitForStatus(savedBeerOrder.getId(), BeerOrderStatusEnum.VALIDATION_PENDING);
         return savedBeerOrder;
     }
 
@@ -89,8 +90,10 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     @Override
     public void beerOrderAllocationFailed(final BeerOrderDto beerOrderDto) {
         final Optional<BeerOrder> optBeerOrder = beerOrderRepository.findById(beerOrderDto.getId());
-        optBeerOrder.ifPresentOrElse(beerOrder -> sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_FAILED),
-            () -> log.error(ORDER_NOT_FOUND + beerOrderDto.getId()));
+        optBeerOrder.ifPresentOrElse(beerOrder -> {
+            sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_FAILED);
+            awaitForStatus(beerOrder.getId(), BeerOrderStatusEnum.ALLOCATION_EXCEPTION);
+        }, () -> log.error(ORDER_NOT_FOUND + beerOrderDto.getId()));
     }
 
     @Override
@@ -98,6 +101,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         final Optional<BeerOrder> optBeerOrder = beerOrderRepository.findById(id);
         optBeerOrder.ifPresentOrElse(beerOrder -> {
             sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.BEERORDER_PICKED_UP);
+            awaitForStatus(beerOrder.getId(), BeerOrderStatusEnum.PICKED_UP);
         }, () -> log.error(ORDER_NOT_FOUND + id));
 
     }

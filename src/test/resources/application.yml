@@ -6,3 +6,9 @@ sfg:
 logging:
   level:
     guru: debug
+spring:
+  cloud:
+    discovery:
+      enabled: false
+tastingroom:
+  enabled: false

@@ -28,7 +28,6 @@ import com.github.jenspiegsa.wiremockextension.Managed;
 import com.github.jenspiegsa.wiremockextension.WireMockExtension;
 import com.github.tomakehurst.wiremock.WireMockServer;
 
-import guru.sfg.beer.order.service.bootstrap.BeerOrderBootStrap;
 import guru.sfg.beer.order.service.config.JmsConfig;
 import guru.sfg.beer.order.service.domain.BeerOrder;
 import guru.sfg.beer.order.service.domain.BeerOrderLine;
@@ -45,6 +44,7 @@ import guru.sfg.brewery.model.events.DeallocateOrderRequest;
 @SpringBootTest
 class BeerOrderManagerImplIT {
 
+    private static final String MOCK_UPC = "12345";
     @Autowired
     private BeerOrderManager beerOrderManager;
     @Autowired
@@ -76,24 +76,16 @@ class BeerOrderManagerImplIT {
          */
     }
 
-    private void stub(final String upc) throws JsonProcessingException {
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, upc))
-            .willReturn(okJson(objectMapper.writeValueAsString(BeerDto.builder().id(beerId).upc(upc).build()))));
-    }
-
     @BeforeEach
     void setup() throws JsonProcessingException {
         beerId = getID();
         testCustomer = customerRepository.save(Customer.builder().id(getID()).customerName("TestCust").build());
-        stub(BeerOrderBootStrap.BEER_1_UPC);
-        stub(BeerOrderBootStrap.BEER_2_UPC);
-        stub(BeerOrderBootStrap.BEER_3_UPC);
     }
 
     @Test
     void testNewToAllocate() throws JsonProcessingException {
-        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc(MOCK_UPC).build();
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, MOCK_UPC))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         final BeerOrder beerOrder = createBeerOrder();
@@ -123,8 +115,8 @@ class BeerOrderManagerImplIT {
 
     @Test
     void testNewToPickedUp() throws JsonProcessingException {
-        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc(MOCK_UPC).build();
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, MOCK_UPC))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         final BeerOrder beerOrder = createBeerOrder();
@@ -152,8 +144,8 @@ class BeerOrderManagerImplIT {
 
     @Test
     void testFailedValidation() throws JsonProcessingException {
-        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc(MOCK_UPC).build();
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, MOCK_UPC))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         final BeerOrder beerOrder = createBeerOrder();
@@ -170,8 +162,8 @@ class BeerOrderManagerImplIT {
 
     @Test
     void testAllocationFailure() throws JsonProcessingException {
-        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc(MOCK_UPC).build();
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, MOCK_UPC))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         final BeerOrder beerOrder = createBeerOrder();
@@ -193,8 +185,8 @@ class BeerOrderManagerImplIT {
 
     @Test
     void testPartialAllocation() throws JsonProcessingException {
-        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc(MOCK_UPC).build();
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, MOCK_UPC))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         final BeerOrder beerOrder = createBeerOrder();
@@ -212,9 +204,9 @@ class BeerOrderManagerImplIT {
 
     @Test
     void testValidationPendingToCancel() throws JsonProcessingException {
-        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc(MOCK_UPC).build();
 
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, MOCK_UPC))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         final BeerOrder beerOrder = createBeerOrder();
@@ -237,9 +229,9 @@ class BeerOrderManagerImplIT {
 
     @Test
     void testAllocationPendingToCancel() throws JsonProcessingException {
-        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc(MOCK_UPC).build();
 
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, MOCK_UPC))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         final BeerOrder beerOrder = createBeerOrder();
@@ -262,9 +254,9 @@ class BeerOrderManagerImplIT {
 
     @Test
     void testAllocatedToCancel() throws JsonProcessingException {
-        final BeerDto beerDto = BeerDto.builder().id(beerId).upc("12345").build();
+        final BeerDto beerDto = BeerDto.builder().id(beerId).upc(MOCK_UPC).build();
 
-        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, "12345"))
+        wireMockServer.stubFor(get(parseURL(BeerServiceRestTemplateImpl.BEER_UPC_PATH, MOCK_UPC))
             .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         final BeerOrder beerOrder = createBeerOrder();
@@ -297,7 +289,7 @@ class BeerOrderManagerImplIT {
     private BeerOrder createBeerOrder() {
         final BeerOrder beerOrder = BeerOrder.builder().customer(testCustomer).build();
         final Set<BeerOrderLine> lines = new HashSet<>();
-        lines.add(BeerOrderLine.builder().beerId(beerId).upc("12345").orderQuantity(1).beerOrder(beerOrder).build());
+        lines.add(BeerOrderLine.builder().beerId(beerId).upc(MOCK_UPC).orderQuantity(1).beerOrder(beerOrder).build());
 
         beerOrder.setBeerOrderLines(lines);
 
