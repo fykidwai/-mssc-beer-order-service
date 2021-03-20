@@ -16,8 +16,7 @@ spring:
         useServerPrepStmts: true
       maximum-pool-size: 5  jpa:    database: mysql    hibernate:      ddl-auto: update    properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-
+        dialect: org.hibernate.dialect.MySQL8Dialect  cloud:    config:      discovery:        enabled: false
 
 # Enable logging for config troubleshooting
 #logging:
