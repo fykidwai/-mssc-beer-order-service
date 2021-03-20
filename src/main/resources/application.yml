@@ -17,6 +17,7 @@ spring:
     serialization:
       write-dates-as-timestamps: false
       write-date-timestamps-as-nanoseconds: true
-
+  zipkin:
+    base-url: http://192.168.99.101:9411
 tastingroom:
   enabled: true
