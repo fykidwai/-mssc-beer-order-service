@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    config:
+      discovery:
+        service-id: mssc-brewery-config
+      fail-fast: true
+      username: MyUserName
+      password: MySecretPassword
+    discovery:
+      enabled: true
