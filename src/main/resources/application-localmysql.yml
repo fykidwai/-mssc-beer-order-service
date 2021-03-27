@@ -2,7 +2,7 @@ spring:
   datasource:
     username: beer_order_service
     password: password
-    url: jdbc:mysql://192.168.99.101:3306/beerorderservice?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC    hikari:
+    url: jdbc:mysql://localhost:3306/beerorderservice?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC    hikari:
       data-source-properties:
         cachePrepStmts: true
         cacheResultSetMetadata: true

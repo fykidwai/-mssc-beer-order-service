@@ -10,7 +10,6 @@ spring:
   application:
     name: order-service
   artemis:
-    host: 192.168.99.101
     user: artemis
     password: simetraehcapa
   jackson:
