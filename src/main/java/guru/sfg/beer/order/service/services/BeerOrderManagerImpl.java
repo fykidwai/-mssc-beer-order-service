@@ -11,6 +11,7 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import guru.sfg.beer.order.service.domain.BeerOrder;
@@ -42,15 +43,13 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         beerOrder.setOrderStatus(BeerOrderStatusEnum.NEW);
         final BeerOrder savedBeerOrder = beerOrderRepository.saveAndFlush(beerOrder);
         sendBeerOrderEvent(savedBeerOrder, BeerOrderEventEnum.VALIDATE_ORDER);
-        awaitForStatus(savedBeerOrder.getId(), BeerOrderStatusEnum.VALIDATION_PENDING);
         return savedBeerOrder;
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public void processValidationResult(final UUID beerOrderId, final Boolean isValid) {
-        log.debug("Process Validation Result for beerOrderId: " + beerOrderId + " Valid? " + isValid);
-
+        log.debug("for beerOrderId: " + beerOrderId + " Valid? " + isValid);
         final Optional<BeerOrder> optBeerOrder = beerOrderRepository.findById(beerOrderId);
         optBeerOrder.ifPresentOrElse(beerOrder -> {
             if (isValid) {
@@ -92,7 +91,6 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         final Optional<BeerOrder> optBeerOrder = beerOrderRepository.findById(beerOrderDto.getId());
         optBeerOrder.ifPresentOrElse(beerOrder -> {
             sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_FAILED);
-            awaitForStatus(beerOrder.getId(), BeerOrderStatusEnum.ALLOCATION_EXCEPTION);
         }, () -> log.error(ORDER_NOT_FOUND + beerOrderDto.getId()));
     }
 
@@ -101,7 +99,6 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         final Optional<BeerOrder> optBeerOrder = beerOrderRepository.findById(id);
         optBeerOrder.ifPresentOrElse(beerOrder -> {
             sendBeerOrderEvent(beerOrder, BeerOrderEventEnum.BEERORDER_PICKED_UP);
-            awaitForStatus(beerOrder.getId(), BeerOrderStatusEnum.PICKED_UP);
         }, () -> log.error(ORDER_NOT_FOUND + id));
 
     }
